@@ -179,8 +179,8 @@ ob_start();
     <?php else: ?>
         <p class="text-muted">Aucun document n’a encore été ajouté.</p>
     <?php endif; ?>
-?php if ($canEdit && count($documents) > 0): ?>
-    <form action="download_documents.php" method="POST" class="mt-3">
+<?php if ($canEdit && count($documents) > 0): ?>
+    <form action="download_documents.php" method="POST" class="mt-4">
         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
         <button type="submit" class="btn btn-outline-primary">
             <i class="fa fa-download me-2"></i>Télécharger tous les documents (.zip)
