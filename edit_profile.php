@@ -52,10 +52,14 @@ ob_start();
             </div>
         </div>
 
-        <div class="mt-4 d-flex justify-content-between">
-            <a href="user_profile.php?id=<?= $user['id'] ?>" class="btn btn-secondary">← Retour</a>
+        <div class="tab-pane fade show active" id="infos" role="tabpanel">
+    <form action="update_profile.php" method="POST">
+        <?php include 'partials/edit_form_infos.php'; ?>
+        <div class="mt-3 text-end">
             <button type="submit" class="btn btn-primary"><i class="fa fa-save me-2"></i>Enregistrer les modifications</button>
         </div>
+    </form>
+</div>
     </form>
 </div>
 
