@@ -16,10 +16,10 @@ if (!$isAdmin && !$isOwner) {
     exit;
 }
 
-// Récupération des champs
+// Champs attendus
 $fields = [
-    'civility', 'address', 'job', 'birthdate', 'birthplace', 'nationality',
-    'specialty', 'rpps', 'ssn', 'language'
+    'civility', 'address', 'birthdate', 'birth_place', 'nationality',
+    'rpps', 'social_security_number', 'preferred_language'
 ];
 
 $data = [];
@@ -27,7 +27,7 @@ foreach ($fields as $field) {
     $data[$field] = $_POST[$field] ?? null;
 }
 
-// Vérifier si une ligne existe déjà
+// Vérifie si des données existent déjà
 $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM user_details WHERE user_id = ?");
 $checkStmt->execute([$userId]);
 $exists = $checkStmt->fetchColumn() > 0;
@@ -44,7 +44,12 @@ if ($exists) {
     $stmt->execute([$userId, ...array_values($data)]);
 }
 
-$_SESSION['toast'] = ['message' => '✅ Informations mises à jour.', 'type' => 'success'];
+// Message de confirmation
+$_SESSION['toast'] = [
+    'message' => '✅ Informations mises à jour.',
+    'type' => 'success'
+];
+
 header("Location: user_profile.php?id=$userId");
 exit;
 ?>
