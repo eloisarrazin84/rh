@@ -259,6 +259,14 @@ $identityDocs = $docsQuery->fetchAll();
 <?php else: ?>
     <p class="text-muted">Aucun document d’identité enregistré.</p>
 <?php endif; ?>
+<?php if ($canEdit && count($identityDocs) > 0): ?>
+<form action="download_identity_docs.php" method="POST" class="mt-3">
+    <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="fa fa-download me-2"></i>Télécharger tous les documents d’identité (.zip)
+    </button>
+</form>
+<?php endif; ?>
     <div class="mt-4">
         <a href="<?= $_SESSION['role'] === 'admin' ? 'manage_users.php' : 'dashboard.php' ?>" class="btn btn-secondary">← Retour</a>
     </div>
