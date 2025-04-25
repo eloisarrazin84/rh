@@ -109,11 +109,6 @@ ob_start();
         <div class="tab-pane fade" id="docs" role="tabpanel">
             <?php include 'partials/profile_documents.php'; ?>
         </div>
-
-        <!-- Onglet 3 -->
-        <div class="tab-pane fade" id="identity" role="tabpanel">
-            <?php include 'partials/profile_identity.php'; ?>
-        </div>
     </div>
 
     <div class="mt-4">
