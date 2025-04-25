@@ -10,10 +10,8 @@ if (!$id || !isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Détermine si l'utilisateur peut modifier ce profil
 $canEdit = ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] == $id);
 
-// Récupération des infos utilisateur
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$id]);
 $user = $stmt->fetch();
@@ -25,12 +23,10 @@ if (!$user) {
 
 $avatarPath = $user['avatar'] ? 'uploads/avatars/' . $user['avatar'] : 'img/default_avatar.png';
 
-// Infos administratives
 $detailsStmt = $pdo->prepare("SELECT * FROM user_details WHERE user_id = ?");
 $detailsStmt->execute([$id]);
 $details = $detailsStmt->fetch();
 
-// Documents RH
 $documentsStmt = $pdo->prepare("SELECT * FROM documents WHERE user_id = ? ORDER BY uploaded_at DESC");
 $documentsStmt->execute([$id]);
 $documents = $documentsStmt->fetchAll();
@@ -71,7 +67,7 @@ ob_start();
     </ul>
 
     <div class="tab-content" id="profileTabsContent">
-        <!-- Onglet Infos -->
+        <!-- Infos personnelles -->
         <div class="tab-pane fade show active" id="info" role="tabpanel">
             <div class="row g-4">
                 <div class="col-md-4 text-center">
@@ -119,12 +115,12 @@ ob_start();
             </div>
         </div>
 
-        <!-- Onglet Documents -->
+        <!-- Documents RH -->
         <div class="tab-pane fade" id="docs" role="tabpanel">
             <?php include 'partials/profile_documents.php'; ?>
         </div>
 
-        <!-- Onglet Compétences -->
+        <!-- Compétences -->
         <div class="tab-pane fade" id="skills" role="tabpanel">
             <?php include 'partials/profile_skills.php'; ?>
         </div>
