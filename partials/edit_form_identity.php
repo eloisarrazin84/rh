@@ -28,7 +28,9 @@ $identityDocs = $docsQuery->fetchAll();
             <input type="date" name="valid_until" class="form-control">
         </div>
         <div class="col-md-auto">
-            <button type="submit" class="btn btn-outline-success">📤 Ajouter</button>
+            <button type="submit" class="btn btn-outline-success">
+                <i class="fa fa-upload me-1"></i>Ajouter
+            </button>
         </div>
     </div>
 </form>
@@ -38,8 +40,8 @@ $identityDocs = $docsQuery->fetchAll();
 <ul class="list-group shadow-sm">
     <?php foreach ($identityDocs as $doc): 
         $isExpired = $doc['valid_until'] && (new DateTime($doc['valid_until'])) < new DateTime();
-        $badge = $isExpired ? 'danger' : 'secondary';
-        $text = $isExpired ? 'Expiré' : 'Valide jusqu’au ' . date('d/m/Y', strtotime($doc['valid_until']));
+        $badgeColor = $isExpired ? 'danger' : 'secondary';
+        $badgeText = $isExpired ? 'Expiré' : 'Valide jusqu’au ' . date('d/m/Y', strtotime($doc['valid_until']));
     ?>
     <li class="list-group-item d-flex justify-content-between align-items-center">
         <div>
@@ -49,23 +51,28 @@ $identityDocs = $docsQuery->fetchAll();
             </a>
             <small class="text-muted ms-2">Ajouté le <?= date('d/m/Y', strtotime($doc['uploaded_at'])) ?></small>
             <?php if ($doc['valid_until']): ?>
-                <span class="badge bg-<?= $badge ?> ms-2"><?= $text ?></span>
+                <span class="badge bg-<?= $badgeColor ?> ms-2"><?= $badgeText ?></span>
             <?php endif; ?>
         </div>
-        <a href="delete_identity_doc.php?id=<?= $doc['id'] ?>&uid=<?= $user['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce document ?');">
-            <i class="fa fa-trash"></i>
+        <?php if ($canEdit): ?>
+        <a href="delete_identity_doc.php?id=<?= $doc['id'] ?>&uid=<?= $user['id'] ?>" 
+           class="btn btn-sm btn-outline-danger" 
+           onclick="return confirm('Supprimer ce document ?');">
+           <i class="fa fa-trash"></i>
         </a>
+        <?php endif; ?>
     </li>
     <?php endforeach; ?>
 </ul>
 
-<?php if ($canEdit && count($identityDocs) > 0): ?>
-    <form action="download_identity_docs.php" method="POST" class="mt-3">
-        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-        <button type="submit" class="btn btn-outline-primary">
-            <i class="fa fa-download me-2"></i> Télécharger tous les documents d’identité (.zip)
-        </button>
-    </form>
+<!-- Téléchargement groupé -->
+<?php if ($canEdit): ?>
+<form action="download_identity_docs.php" method="POST" class="mt-3">
+    <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="fa fa-download me-2"></i>Télécharger tous les documents d’identité (.zip)
+    </button>
+</form>
 <?php endif; ?>
 
 <?php else: ?>
