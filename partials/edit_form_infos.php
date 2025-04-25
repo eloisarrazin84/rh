@@ -42,7 +42,4 @@
         <input type="text" name="preferred_language" class="form-control" value="<?= htmlspecialchars($details['preferred_language'] ?? '') ?>">
     </div>
 </div>
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">💾 Enregistrer les modifications</button>
-    </div>
 </form>
