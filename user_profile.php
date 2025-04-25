@@ -180,14 +180,42 @@ ob_start();
         <p class="text-muted">Aucun document n’a encore été ajouté.</p>
     <?php endif; ?>
 <?php if ($canEdit && count($documents) > 0): ?>
-    <form action="download_documents.php" method="POST" class="mt-4">
-        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-        <button type="submit" class="btn btn-outline-primary">
-            <i class="fa fa-download me-2"></i>Télécharger tous les documents (.zip)
-        </button>
-    </form>
-<?php endif; ?>
+  <?php if ($canEdit && count($documents) > 0): ?>
+    <button onclick="downloadDocuments()" class="btn btn-outline-primary mt-4">
+        <i class="fa fa-download me-2"></i>Télécharger tous les documents (.zip)
+    </button>
+    <script>
+    function downloadDocuments() {
+        const toast = document.createElement("div");
+        toast.innerHTML = "📦 Votre fichier est en cours de préparation...";
+        toast.style.position = "fixed";
+        toast.style.bottom = "20px";
+        toast.style.right = "20px";
+        toast.style.background = "#0d6efd";
+        toast.style.color = "white";
+        toast.style.padding = "10px 20px";
+        toast.style.borderRadius = "5px";
+        toast.style.boxShadow = "0 2px 10px rgba(0,0,0,0.2)";
+        document.body.appendChild(toast);
 
+        setTimeout(() => {
+            toast.remove();
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'download_documents.php';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'user_id';
+            input.value = '<?= $user['id'] ?>';
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
+        }, 1200);
+    }
+    </script>
+<?php endif; ?>
     <div class="mt-4">
         <a href="<?= $_SESSION['role'] === 'admin' ? 'manage_users.php' : 'dashboard.php' ?>" class="btn btn-secondary">← Retour</a>
     </div>
