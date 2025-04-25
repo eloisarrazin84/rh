@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require 'includes/config.php';
 session_start();
 
@@ -45,6 +46,8 @@ $zip->close();
 header('Content-Type: application/zip');
 header('Content-Disposition: attachment; filename="documents_user_' . $userId . '.zip"');
 header('Content-Length: ' . filesize($tmpZipPath));
+ob_clean();
+flush();
 readfile($tmpZipPath);
 unlink($tmpZipPath); // nettoie le fichier temporaire
 exit;
