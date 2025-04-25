@@ -31,6 +31,7 @@ ob_start();
 <div class="container py-4">
     <h2 class="mb-4 text-primary"><i class="fa fa-pen me-2"></i>Modifier le profil de <?= htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) ?></h2>
 
+    <!-- Onglets -->
     <ul class="nav nav-tabs mb-4" id="editTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="infos-tab" data-bs-toggle="tab" data-bs-target="#infos" type="button" role="tab">📋 Infos personnelles</button>
@@ -40,27 +41,35 @@ ob_start();
         </li>
     </ul>
 
+    <!-- Formulaire global -->
     <form action="update_profile.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
 
         <div class="tab-content" id="editTabContent">
+            <!-- Infos personnelles -->
             <div class="tab-pane fade show active" id="infos" role="tabpanel">
                 <?php include 'partials/edit_form_infos.php'; ?>
             </div>
+
+            <!-- Documents d’identité -->
             <div class="tab-pane fade" id="identity" role="tabpanel">
                 <?php include 'partials/edit_form_identity.php'; ?>
             </div>
         </div>
 
-        <div class="tab-pane fade show active" id="infos" role="tabpanel">
-    <form action="update_profile.php" method="POST">
-        <?php include 'partials/edit_form_infos.php'; ?>
-        <div class="mt-3 text-end">
-            <button type="submit" class="btn btn-primary"><i class="fa fa-save me-2"></i>Enregistrer les modifications</button>
+        <!-- Bouton de soumission -->
+        <div class="mt-4 text-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save me-2"></i>Enregistrer les modifications
+            </button>
         </div>
     </form>
-</div>
-    </form>
+
+    <div class="mt-3">
+        <a href="<?= $_SESSION['role'] === 'admin' ? 'manage_users.php' : 'dashboard.php' ?>" class="btn btn-secondary">
+            ← Retour
+        </a>
+    </div>
 </div>
 
 <?php
