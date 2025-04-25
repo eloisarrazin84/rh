@@ -16,30 +16,46 @@ if (!$isAdmin && !$isOwner) {
     exit;
 }
 
-// Champs attendus
+// Champs obligatoires (sauf rpps)
 $fields = [
-    'civility', 'address', 'birthdate', 'birth_place', 'nationality',
-    'rpps', 'social_security_number', 'preferred_language'
+    'civility' => true,
+    'address' => true,
+    'birthdate' => true,
+    'birth_place' => true,
+    'nationality' => true,
+    'rpps' => false, // facultatif
+    'social_security_number' => true
 ];
 
 $data = [];
-foreach ($fields as $field) {
-    $data[$field] = $_POST[$field] ?? null;
+foreach ($fields as $field => $isRequired) {
+    $value = trim($_POST[$field] ?? '');
+
+    if ($isRequired && empty($value)) {
+        $_SESSION['toast'] = [
+            'message' => "❌ Le champ '$field' est requis.",
+            'type' => 'danger'
+        ];
+        header("Location: edit_profile.php?id=$userId");
+        exit;
+    }
+
+    $data[$field] = $value ?: null; // mettre à null si vide pour les champs facultatifs
 }
 
-// Vérifie si des données existent déjà
+// Vérifie si une ligne existe déjà
 $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM user_details WHERE user_id = ?");
 $checkStmt->execute([$userId]);
 $exists = $checkStmt->fetchColumn() > 0;
 
 if ($exists) {
     // UPDATE
-    $sql = "UPDATE user_details SET " . implode(', ', array_map(fn($f) => "$f = ?", $fields)) . " WHERE user_id = ?";
+    $sql = "UPDATE user_details SET " . implode(', ', array_map(fn($f) => "$f = ?", array_keys($data))) . " WHERE user_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([...array_values($data), $userId]);
 } else {
     // INSERT
-    $sql = "INSERT INTO user_details (user_id, " . implode(', ', $fields) . ") VALUES (?, " . str_repeat('?, ', count($fields) - 1) . "?)";
+    $sql = "INSERT INTO user_details (user_id, " . implode(', ', array_keys($data)) . ") VALUES (?, " . str_repeat('?, ', count($data) - 1) . "?)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$userId, ...array_values($data)]);
 }
