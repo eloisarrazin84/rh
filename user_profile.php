@@ -31,10 +31,6 @@ $documents = $pdo->prepare("SELECT * FROM documents WHERE user_id = ? ORDER BY u
 $documents->execute([$id]);
 $documents = $documents->fetchAll();
 
-$identity = $pdo->prepare("SELECT * FROM identity_documents WHERE user_id = ? ORDER BY uploaded_at DESC");
-$identity->execute([$id]);
-$identityDocs = $identity->fetchAll();
-
 function displayValue($val) {
     return $val ? htmlspecialchars($val) : '<span class="text-muted">Non renseigné</span>';
 }
@@ -51,9 +47,6 @@ ob_start();
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="docs-tab" data-bs-toggle="tab" data-bs-target="#docs" type="button">📂 Documents RH</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="identity-tab" data-bs-toggle="tab" data-bs-target="#identity" type="button">🪪 Documents d'identité</button>
         </li>
     </ul>
 
