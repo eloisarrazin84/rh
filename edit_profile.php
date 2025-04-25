@@ -57,7 +57,7 @@ ob_start();
             </div>
         </div>
 
-        <!-- Bouton de soumission -->
+        <!-- ✅ Unique bouton de soumission -->
         <div class="mt-4 text-end">
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-save me-2"></i>Enregistrer les modifications
@@ -65,6 +65,7 @@ ob_start();
         </div>
     </form>
 
+    <!-- Bouton retour -->
     <div class="mt-3">
         <a href="<?= $_SESSION['role'] === 'admin' ? 'manage_users.php' : 'dashboard.php' ?>" class="btn btn-secondary">
             ← Retour
