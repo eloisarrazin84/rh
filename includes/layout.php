@@ -42,19 +42,6 @@ if (isset($_SESSION['user_id'])) {
             <li class="nav-item"><a class="nav-link" href="create_user.php"><i class="fa fa-user-plus me-1"></i>Créer utilisateur</a></li>
             <li class="nav-item"><a class="nav-link" href="manage_users.php"><i class="fa fa-users me-1"></i>Gérer utilisateurs</a></li>
           <?php endif; ?>
-
-          <!-- Menu Mon Profil RH -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="profilDropdown" role="button" data-bs-toggle="dropdown">
-              <i class="fa fa-user-circle me-1"></i>Mon profil RH
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="user_profile.php?id=<?= $_SESSION['user_id'] ?>"><i class="fa fa-id-badge me-2"></i>Voir mon profil</a></li>
-              <li><a class="dropdown-item" href="edit_profile.php?id=<?= $_SESSION['user_id'] ?>"><i class="fa fa-pen me-2"></i>Modifier mes infos</a></li>
-              <li><a class="dropdown-item" href="change_password.php"><i class="fa fa-key me-2"></i>Mot de passe</a></li>
-            </ul>
-          </li>
-        <?php endif; ?>
       </ul>
 
       <!-- Notifications -->
