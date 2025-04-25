@@ -1,56 +1,62 @@
 <?php
 require 'includes/config.php';
-$pageTitle = "Modifier mon profil";
+$pageTitle = "Modifier le profil";
+
 session_start();
 
 $id = $_GET['id'] ?? null;
-if (!$id || !isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'admin' && $_SESSION['user_id'] != $id)) {
+if (!$id || !isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
+
+$canEdit = ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] == $id);
 
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$id]);
 $user = $stmt->fetch();
 
 if (!$user) {
-    header('Location: dashboard.php');
+    header('Location: manage_users.php');
     exit;
 }
 
-$avatarPath = $user['avatar'] ? 'uploads/avatars/' . $user['avatar'] : 'img/default_avatar.png';
-
-$detailsStmt = $pdo->prepare("SELECT * FROM user_details WHERE user_id = ?");
-$detailsStmt->execute([$id]);
-$details = $detailsStmt->fetch() ?: [];
+$stmtDetail = $pdo->prepare("SELECT * FROM user_details WHERE user_id = ?");
+$stmtDetail->execute([$id]);
+$details = $stmtDetail->fetch();
 
 ob_start();
 ?>
 
 <div class="container py-4">
-    <h2 class="text-primary mb-4"><i class="fa fa-pen me-2"></i>Modifier le profil de <?= htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) ?></h2>
+    <h2 class="mb-4 text-primary"><i class="fa fa-pen me-2"></i>Modifier le profil de <?= htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) ?></h2>
 
-    <ul class="nav nav-tabs mb-4" id="editTabs" role="tablist">
+    <ul class="nav nav-tabs mb-4" id="editTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="edit-info-tab" data-bs-toggle="tab" data-bs-target="#edit-info" type="button">🧾 Infos personnelles</button>
+            <button class="nav-link active" id="infos-tab" data-bs-toggle="tab" data-bs-target="#infos" type="button" role="tab">📋 Infos personnelles</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="edit-identity-tab" data-bs-toggle="tab" data-bs-target="#edit-identity" type="button">🪪 Documents d'identité</button>
+            <button class="nav-link" id="identity-tab" data-bs-toggle="tab" data-bs-target="#identity" type="button" role="tab">🪪 Documents d’identité</button>
         </li>
     </ul>
 
-    <div class="tab-content" id="editTabsContent">
-        <div class="tab-pane fade show active" id="edit-info" role="tabpanel">
-            <?php include 'partials/edit_form_infos.php'; ?>
-        </div>
-        <div class="tab-pane fade" id="edit-identity" role="tabpanel">
-            <?php include 'partials/edit_form_identity.php'; ?>
-        </div>
-    </div>
+    <form action="update_profile.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
 
-    <div class="mt-4">
-        <a href="<?= $_SESSION['role'] === 'admin' ? 'manage_users.php' : 'dashboard.php' ?>" class="btn btn-secondary">← Retour</a>
-    </div>
+        <div class="tab-content" id="editTabContent">
+            <div class="tab-pane fade show active" id="infos" role="tabpanel">
+                <?php include 'partials/edit_form_infos.php'; ?>
+            </div>
+            <div class="tab-pane fade" id="identity" role="tabpanel">
+                <?php include 'partials/edit_form_identity.php'; ?>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between">
+            <a href="user_profile.php?id=<?= $user['id'] ?>" class="btn btn-secondary">← Retour</a>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save me-2"></i>Enregistrer les modifications</button>
+        </div>
+    </form>
 </div>
 
 <?php
