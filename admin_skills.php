@@ -1,80 +1,74 @@
 <?php
 require 'includes/config.php';
-$pageTitle = "Gestion des compétences";
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
+    header('Location: login.php');
     exit;
 }
 
-// Ajout de compétence
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
-    $name = trim($_POST['name']);
-    $level = $_POST['level'] ?? null;
+$pageTitle = "Gestion des compétences";
 
-    $stmt = $pdo->prepare("INSERT INTO skills (name, level) VALUES (?, ?)");
-    $stmt->execute([$name, $level]);
-
-    $_SESSION['toast'] = ['message' => '✅ Compétence ajoutée.', 'type' => 'success'];
-    header("Location: admin_skills.php");
-    exit;
-}
-
-// Suppression
-if (isset($_GET['delete'])) {
-    $stmt = $pdo->prepare("DELETE FROM skills WHERE id = ?");
-    $stmt->execute([$_GET['delete']]);
-    $_SESSION['toast'] = ['message' => '🗑️ Compétence supprimée.', 'type' => 'warning'];
-    header("Location: admin_skills.php");
-    exit;
-}
-
-$skills = $pdo->query("SELECT * FROM skills ORDER BY name")->fetchAll();
+// Récupération des compétences
+$stmt = $pdo->query("SELECT * FROM skills ORDER BY name ASC");
+$skills = $stmt->fetchAll();
 
 ob_start();
 ?>
 
 <div class="container py-4">
-    <h2 class="text-primary mb-4"><i class="fa fa-tools me-2"></i>Gestion des compétences</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary"><i class="fa fa-brain me-2"></i>Gestion des compétences</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSkillModal">
+            <i class="fa fa-plus me-1"></i> Ajouter une compétence
+        </button>
+    </div>
 
-    <form method="POST" class="row g-3 mb-4">
-        <div class="col-md-6">
-            <label class="form-label">Nom de la compétence</label>
-            <input type="text" name="name" class="form-control" required>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Niveau requis</label>
-            <input type="text" name="level" class="form-control">
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-            <button type="submit" class="btn btn-success w-100"><i class="fa fa-plus"></i> Ajouter</button>
-        </div>
-    </form>
-
-    <table class="table table-bordered table-sm">
-        <thead>
+    <table class="table table-striped table-bordered">
+        <thead class="table-light">
             <tr>
                 <th>Nom</th>
-                <th>Niveau</th>
-                <th>Actions</th>
+                <th class="text-end">Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($skills as $skill): ?>
-                <tr>
-                    <td><?= htmlspecialchars($skill['name']) ?></td>
-                    <td><?= htmlspecialchars($skill['level']) ?></td>
-                    <td>
-                        <a href="?delete=<?= $skill['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette compétence ?')">
+            <tr>
+                <td><?= htmlspecialchars($skill['name']) ?></td>
+                <td class="text-end">
+                    <form action="delete_skill.php" method="POST" class="d-inline">
+                        <input type="hidden" name="id" value="<?= $skill['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette compétence ?')">
                             <i class="fa fa-trash"></i>
-                        </a>
-                        <!-- Plus tard : bouton modifier -->
-                    </td>
-                </tr>
+                        </button>
+                    </form>
+                </td>
+            </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+</div>
+
+<!-- Modal ajout compétence -->
+<div class="modal fade" id="addSkillModal" tabindex="-1" aria-labelledby="addSkillModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="add_skill.php" method="POST" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addSkillModalLabel">Ajouter une compétence</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+            <label for="skillName" class="form-label">Nom de la compétence</label>
+            <input type="text" class="form-control" id="skillName" name="name" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <?php
