@@ -13,6 +13,33 @@ $role = $_SESSION['role'] ?? 'user';
 ob_start();
 ?>
 
+<style>
+.timeline {
+  border-left: 3px solid #0d6efd;
+  margin-left: 1rem;
+  padding-left: 1rem;
+  position: relative;
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+  animation: fadein 0.6s ease forwards;
+}
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.timeline-date {
+  font-weight: bold;
+  color: #0d6efd;
+}
+.timeline-doc {
+  margin-top: 5px;
+}
+.badge-warning { background-color: #ffc107 !important; color: #212529; }
+</style>
+
 <div class="text-center mb-5">
     <h1 class="text-primary fw-bold">
         <?= $role === 'admin' ? 'Tableau de bord RH - Administrateur' : 'Mon espace RH personnel' ?>
@@ -23,7 +50,7 @@ ob_start();
 <div class="row g-4 justify-content-center">
 <?php if ($role === 'admin'): ?>
 
-    <!-- Admin : Ajouter utilisateur -->
+    <!-- Cartes admin -->
     <div class="col-md-6 col-lg-4">
         <div class="card border-primary shadow-sm text-center h-100">
             <div class="card-body">
@@ -35,7 +62,6 @@ ob_start();
         </div>
     </div>
 
-    <!-- Admin : Voir tous les utilisateurs -->
     <div class="col-md-6 col-lg-4">
         <div class="card border-success shadow-sm text-center h-100">
             <div class="card-body">
@@ -47,7 +73,6 @@ ob_start();
         </div>
     </div>
 
-    <!-- Admin : Voir comptes inactifs -->
     <div class="col-md-6 col-lg-4">
         <div class="card border-warning shadow-sm text-center h-100">
             <div class="card-body">
@@ -61,7 +86,7 @@ ob_start();
 
 <?php else: ?>
 
-    <!-- Utilisateur : Voir son profil -->
+    <!-- Cartes utilisateur -->
     <div class="col-md-6 col-lg-4">
         <div class="card border-info shadow-sm text-center h-100">
             <div class="card-body">
@@ -73,19 +98,17 @@ ob_start();
         </div>
     </div>
 
-    <!-- Utilisateur : Accès documents -->
     <div class="col-md-6 col-lg-4">
         <div class="card border-secondary shadow-sm text-center h-100">
             <div class="card-body">
                 <i class="fa fa-file-alt fa-2x text-secondary mb-3"></i>
                 <h5 class="card-title">Mes documents</h5>
                 <p class="card-text">Téléversez ou consultez vos fichiers RH.</p>
-                <a href="upload_documents.php" class="btn btn-secondary btn-sm">Accéder</a>
+                <a href="user_profile.php?id=<?= $_SESSION['user_id'] ?>" class="btn btn-secondary btn-sm">Accéder</a>
             </div>
         </div>
     </div>
 
-    <!-- Utilisateur : Modifier mot de passe -->
     <div class="col-md-6 col-lg-4">
         <div class="card border-warning shadow-sm text-center h-100">
             <div class="card-body">
@@ -98,6 +121,48 @@ ob_start();
     </div>
 
 <?php endif; ?>
+</div>
+
+<hr class="my-5">
+<h4 class="text-primary"><i class="fa fa-clock me-2"></i>Documents à surveiller</h4>
+
+<div class="timeline mt-4">
+<?php
+if ($role === 'admin') {
+    $query = $pdo->query("SELECT d.*, u.firstname, u.lastname FROM documents d JOIN users u ON d.user_id = u.id WHERE d.valid_until IS NOT NULL ORDER BY d.valid_until ASC");
+} else {
+    $stmt = $pdo->prepare("SELECT * FROM documents WHERE user_id = ? AND valid_until IS NOT NULL ORDER BY valid_until ASC");
+    $stmt->execute([$_SESSION['user_id']]);
+    $query = $stmt;
+}
+
+foreach ($query->fetchAll() as $doc):
+    $date = new DateTime($doc['valid_until']);
+    $today = new DateTime();
+    $interval = $today->diff($date)->days;
+    $badge = '';
+
+    if ($date < $today) {
+        $badge = '<span class="badge bg-danger ms-2">Expiré</span>';
+    } elseif ($interval <= 30) {
+        $badge = '<span class="badge bg-warning text-dark ms-2">À renouveler</span>';
+    }
+
+    $icon = match ($doc['doc_type']) {
+        'Diplôme' => '🎓',
+        'Attestation' => '📜',
+        'Carte professionnelle' => '🪪',
+        'Certificat médical' => '🩺',
+        default => '📁'
+    };
+
+    $owner = $role === 'admin' ? ' de <strong>' . htmlspecialchars($doc['firstname'] . ' ' . $doc['lastname']) . '</strong>' : '';
+?>
+    <div class="timeline-item">
+        <div class="timeline-date"><?= $date->format('d/m/Y') ?></div>
+        <div class="timeline-doc"><?= $icon ?> <?= htmlspecialchars($doc['doc_type']) . $owner ?> <?= $badge ?></div>
+    </div>
+<?php endforeach; ?>
 </div>
 
 <?php
