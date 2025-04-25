@@ -159,6 +159,11 @@ ob_start();
                         <label class="form-label">📤 Fichiers d’identité (PDF, JPG)</label>
                         <input type="file" name="identity_files[]" class="form-control" multiple>
                     </div>
+                    <div class="col-md-6">
+    <label class="form-label">Date de validité globale (facultatif)</label>
+    <input type="date" name="identity_valid_until" class="form-control">
+</div>
+
                 </div>
             </div>
 
