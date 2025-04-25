@@ -74,6 +74,9 @@ if (!empty($_FILES['identity_files']['name'][0])) {
 
             $docStmt = $pdo->prepare("INSERT INTO identity_documents (user_id, doc_type, filename) VALUES (?, ?, ?)");
             $docStmt->execute([$userId, 'Autre', $filename]);
+$validUntil = $_POST['identity_valid_until'] ?? null;
+$docStmt = $pdo->prepare("INSERT INTO identity_documents (user_id, doc_type, filename, valid_until) VALUES (?, ?, ?, ?)");
+$docStmt->execute([$userId, 'Autre', $filename, $validUntil ?: null]);
         }
     }
 }
