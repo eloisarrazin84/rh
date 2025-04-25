@@ -59,6 +59,9 @@ ob_start();
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="docs-tab" data-bs-toggle="tab" data-bs-target="#docs" type="button">📂 Documents RH</button>
         </li>
+        <li class="nav-item" role="presentation">
+    <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button">🎓 Compétences</button>
+</li>
     </ul>
 
     <div class="tab-content" id="profileTabsContent">
