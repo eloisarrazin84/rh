@@ -216,6 +216,7 @@ ob_start();
     }
     </script>
 <?php endif; ?>
+<?php endif; ?>                    
     <div class="mt-4">
         <a href="<?= $_SESSION['role'] === 'admin' ? 'manage_users.php' : 'dashboard.php' ?>" class="btn btn-secondary">← Retour</a>
     </div>
