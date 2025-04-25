@@ -16,31 +16,29 @@ if (!$isAdmin && !$isOwner) {
     exit;
 }
 
-// Champs obligatoires (sauf rpps)
+// Champs obligatoires sauf RPPS
 $fields = [
-    'civility' => true,
-    'address' => true,
-    'birthdate' => true,
-    'birth_place' => true,
-    'nationality' => true,
-    'rpps' => false, // facultatif
-    'social_security_number' => true
+    'civility', 'address', 'job', 'specialty',
+    'birthdate', 'birth_place', 'nationality',
+    'social_security_number', 'rpps' // RPPS est facultatif
 ];
 
 $data = [];
-foreach ($fields as $field => $isRequired) {
-    $value = trim($_POST[$field] ?? '');
+foreach ($fields as $field) {
+    $data[$field] = trim($_POST[$field] ?? null);
+}
 
-    if ($isRequired && empty($value)) {
+// Vérification des champs obligatoires
+$requiredFields = ['civility', 'address', 'job', 'specialty', 'birthdate', 'birth_place', 'nationality', 'social_security_number'];
+foreach ($requiredFields as $required) {
+    if (empty($data[$required])) {
         $_SESSION['toast'] = [
-            'message' => "❌ Le champ '$field' est requis.",
+            'message' => '❌ Le champ ' . $required . ' est obligatoire.',
             'type' => 'danger'
         ];
-        header("Location: edit_profile.php?id=$userId");
+        header("Location: edit_profile.php?id=" . $userId);
         exit;
     }
-
-    $data[$field] = $value ?: null; // mettre à null si vide pour les champs facultatifs
 }
 
 // Vérifie si une ligne existe déjà
@@ -50,22 +48,17 @@ $exists = $checkStmt->fetchColumn() > 0;
 
 if ($exists) {
     // UPDATE
-    $sql = "UPDATE user_details SET " . implode(', ', array_map(fn($f) => "$f = ?", array_keys($data))) . " WHERE user_id = ?";
+    $sql = "UPDATE user_details SET " . implode(', ', array_map(fn($f) => "$f = ?", $fields)) . " WHERE user_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([...array_values($data), $userId]);
 } else {
     // INSERT
-    $sql = "INSERT INTO user_details (user_id, " . implode(', ', array_keys($data)) . ") VALUES (?, " . str_repeat('?, ', count($data) - 1) . "?)";
+    $sql = "INSERT INTO user_details (user_id, " . implode(', ', $fields) . ") VALUES (?, " . str_repeat('?, ', count($fields) - 1) . "?)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$userId, ...array_values($data)]);
 }
 
-// Message de confirmation
-$_SESSION['toast'] = [
-    'message' => '✅ Informations mises à jour.',
-    'type' => 'success'
-];
-
+$_SESSION['toast'] = ['message' => '✅ Informations mises à jour.', 'type' => 'success'];
 header("Location: user_profile.php?id=$userId");
 exit;
 ?>
