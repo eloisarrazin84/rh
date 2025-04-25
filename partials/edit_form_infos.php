@@ -1,5 +1,3 @@
-<input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-
 <div class="row g-3">
     <div class="col-md-4">
         <label class="form-label">Civilité</label>
@@ -39,11 +37,5 @@
     <div class="col-md-6">
         <label class="form-label">Langue préférée</label>
         <input type="text" name="preferred_language" class="form-control" value="<?= htmlspecialchars($details['preferred_language'] ?? '') ?>">
-    </div>
-
-    <div class="col-12 text-end mt-3">
-        <button type="submit" class="btn btn-primary">
-            <i class="fa fa-save me-2"></i>Enregistrer les modifications
-        </button>
     </div>
 </div>
