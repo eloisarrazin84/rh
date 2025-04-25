@@ -65,7 +65,33 @@ if (isset($_SESSION['user_id'])) {
         </li>
       </ul>
 
-      <!-- Avatar à droite -->
+    <!-- Notification icon -->
+<li class="nav-item dropdown me-3">
+  <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fa fa-bell fa-lg"></i>
+    <?php if (!empty($_SESSION['notifications'])): ?>
+      <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+        <span class="visually-hidden">Nouvelles notifications</span>
+      </span>
+    <?php endif; ?>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 300px; max-height: 300px; overflow-y: auto;">
+    <li class="dropdown-header fw-bold text-primary">Notifications</li>
+
+    <?php if (!empty($_SESSION['notifications'])): ?>
+      <?php foreach ($_SESSION['notifications'] as $notif): ?>
+        <li class="px-3 py-2 small border-bottom">
+          <i class="<?= $notif['icon'] ?? 'fa fa-info-circle' ?> me-2 text-<?= $notif['type'] ?? 'secondary' ?>"></i>
+          <?= htmlspecialchars($notif['message']) ?>
+          <div class="text-muted small"><?= $notif['time'] ?? '' ?></div>
+        </li>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <li class="px-3 py-2 text-muted small">Aucune notification.</li>
+    <?php endif; ?>
+  </ul>
+</li>  
+    <!-- Avatar à droite -->
       <?php if (isset($currentUser)): ?>
         <div class="dropdown">
           <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
