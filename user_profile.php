@@ -11,7 +11,6 @@ if (!$id || !isset($_SESSION['user_id'])) {
 
 $canEdit = ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] == $id);
 
-// Récupération utilisateur
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$id]);
 $user = $stmt->fetch();
@@ -39,7 +38,19 @@ ob_start();
 ?>
 
 <div class="container py-4">
-    <h2 class="text-primary mb-4"><i class="fa fa-user-circle me-2"></i>Profil de <?= htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) ?></h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary"><i class="fa fa-user-circle me-2"></i>Profil de <?= htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) ?></h2>
+        <?php if ($canEdit): ?>
+            <div>
+                <a href="edit_profile.php?id=<?= $user['id'] ?>" class="btn btn-outline-primary me-2">
+                    <i class="fa fa-pen me-1"></i> Modifier les informations
+                </a>
+                <a href="change_password.php?id=<?= $user['id'] ?>" class="btn btn-outline-danger">
+                    <i class="fa fa-key me-1"></i> Réinitialiser mot de passe
+                </a>
+            </div>
+        <?php endif; ?>
+    </div>
 
     <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -98,7 +109,6 @@ ob_start();
             </div>
         </div>
 
-        <!-- Onglet 2 -->
         <div class="tab-pane fade" id="docs" role="tabpanel">
             <?php include 'partials/profile_documents.php'; ?>
         </div>
