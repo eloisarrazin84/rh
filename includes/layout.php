@@ -47,6 +47,9 @@ if (isset($_SESSION['user_id'])) {
             <li class="nav-item">
               <a class="nav-link" href="manage_users.php"><i class="fa fa-users me-1"></i>Gérer utilisateurs</a>
             </li>
+      <li class="nav-item">
+    <a class="nav-link" href="admin_skills.php"><i class="fa fa-brain me-1"></i>Gérer compétences</a>
+  </li>
           <?php endif; ?>
         <?php endif; ?>
       </ul>
