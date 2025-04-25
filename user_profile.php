@@ -65,6 +65,9 @@ ob_start();
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="docs-tab" data-bs-toggle="tab" data-bs-target="#docs" type="button">📂 Documents RH</button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button">🧠 Compétences</button>
+        </li>
     </ul>
 
     <div class="tab-content" id="profileTabsContent">
@@ -120,6 +123,11 @@ ob_start();
         <div class="tab-pane fade" id="docs" role="tabpanel">
             <?php include 'partials/profile_documents.php'; ?>
         </div>
+
+        <!-- Onglet Compétences -->
+        <div class="tab-pane fade" id="skills" role="tabpanel">
+            <?php include 'partials/profile_skills.php'; ?>
+        </div>
     </div>
 
     <div class="mt-4">
@@ -131,4 +139,3 @@ ob_start();
 $content = ob_get_clean();
 include 'includes/layout.php';
 ?>
-
