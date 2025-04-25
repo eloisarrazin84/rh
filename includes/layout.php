@@ -22,46 +22,66 @@ if (isset($_SESSION['user_id'])) {
 </head>
 <body>
 
-<!-- Navbar -->
-<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+<!-- Navbar améliorée -->
+<nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm">
+  <div class="container-fluid">
+    <!-- Logo + titre -->
+    <a class="navbar-brand fw-bold d-flex align-items-center" href="dashboard.php">
+      <i class="fa-solid fa-shield-halved me-2"></i>Outdoor Secours
+    </a>
 
-  <?php if (isset($_SESSION['user_id'])): ?>
-    <li class="nav-item">
-      <a class="nav-link" href="dashboard.php"><i class="fa fa-home me-1"></i>Dashboard</a>
-    </li>
+    <!-- Bouton responsive -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <?php if ($_SESSION['role'] === 'admin'): ?>
-      <!-- Section admin -->
-      <li class="nav-item">
-        <a class="nav-link" href="create_user.php"><i class="fa fa-user-plus me-1"></i>Créer utilisateur</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="manage_users.php"><i class="fa fa-users me-1"></i>Gérer utilisateurs</a>
-      </li>
-    <?php endif; ?>
+    <!-- Contenu du menu -->
+    <div class="collapse navbar-collapse" id="navbarMain">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-    <!-- Section utilisateur -->
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="profilMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fa fa-user-circle me-1"></i>Mon profil RH
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="profilMenu">
-        <li><a class="dropdown-item" href="user_profile.php?id=<?= $_SESSION['user_id'] ?>"><i class="fa fa-id-badge me-2"></i>Voir mon profil</a></li>
-        <li><a class="dropdown-item" href="edit_profile.php?id=<?= $_SESSION['user_id'] ?>"><i class="fa fa-pen me-2"></i>Modifier mes infos</a></li>
-        <li><a class="dropdown-item" href="change_password.php"><i class="fa fa-key me-2"></i>Changer mot de passe</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="dashboard.php"><i class="fa fa-home me-1"></i>Dashboard</a>
+        </li>
+
+        <?php if ($_SESSION['role'] === 'admin'): ?>
+          <li class="nav-item">
+            <a class="nav-link" href="create_user.php"><i class="fa fa-user-plus me-1"></i>Créer utilisateur</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="manage_users.php"><i class="fa fa-users me-1"></i>Gérer utilisateurs</a>
+          </li>
+        <?php endif; ?>
+
+        <!-- Profil -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="profilDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-user-circle me-1"></i>Mon profil RH
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="profilDropdown">
+            <li><a class="dropdown-item" href="user_profile.php?id=<?= $_SESSION['user_id'] ?>"><i class="fa fa-id-badge me-2"></i>Voir mon profil</a></li>
+            <li><a class="dropdown-item" href="edit_profile.php?id=<?= $_SESSION['user_id'] ?>"><i class="fa fa-pen me-2"></i>Modifier mes infos</a></li>
+            <li><a class="dropdown-item" href="change_password.php"><i class="fa fa-key me-2"></i>Mot de passe</a></li>
+          </ul>
+        </li>
       </ul>
-    </li>
 
-    <li class="nav-item">
-      <a class="nav-link text-danger" href="logout.php"><i class="fa fa-power-off me-1"></i>Déconnexion</a>
-    </li>
-
-  <?php else: ?>
-    <li class="nav-item">
-      <a class="nav-link" href="login.php"><i class="fa fa-lock me-1"></i>Connexion</a>
-    </li>
-  <?php endif; ?>
-</ul>
+      <!-- Avatar à droite -->
+      <?php if (isset($currentUser)): ?>
+        <div class="dropdown">
+          <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+            <img src="<?= $currentUser['avatar'] ? 'uploads/avatars/' . $currentUser['avatar'] : 'img/default_avatar.png' ?>"
+                width="32" height="32" class="rounded-circle me-2" alt="Avatar">
+            <?= htmlspecialchars($currentUser['firstname']) ?>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="user_profile.php?id=<?= $_SESSION['user_id'] ?>"><i class="fa fa-user me-2"></i>Mon profil</a></li>
+            <li><a class="dropdown-item text-danger" href="logout.php"><i class="fa fa-power-off me-2"></i>Déconnexion</a></li>
+          </ul>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+</nav>
 
       <?php if (isset($_SESSION['user_id'])): ?>
 <?php if (isset($currentUser)): ?>
